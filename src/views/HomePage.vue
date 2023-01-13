@@ -1,19 +1,19 @@
 <template>
-    <router-view></router-view>
   
+      <header>
+        <Navbar />
+      </header>
+
+      <router-view></router-view>
 </template>
 
 <script>
-import Navbar from "./components/Navbar.vue";
-import { mapActions, mapState } from 'pinia';
-import dataStore from '@/stores/dataStore';
-// import LoginPage from "./components/LoginPage.vue";
-  
+import Navbar from "../components/Navbar.vue";
+
 export default {
   name: 'app',
   components: {
-    Navbar,
-    // LoginPage
+    Navbar
   },
   data() {
     return {
@@ -21,8 +21,21 @@ export default {
       dest: "", 
       date: "", 
       result: "",
-      logged: true
+      reload: false
     };
+  },
+
+  mounted(){
+    //para que actualice la página con los estilos correspondientes, sin hacerlo no me cargaban bien
+    if (localStorage.getItem('reloaded')) {
+        // The page was just reloaded. Clear the value from local storage
+        // so that it will reload the next time this page is visited.
+        localStorage.removeItem('reloaded');
+    } else {
+        // Set a flag so that we know not to reload the page twice.
+        localStorage.setItem('reloaded', '1');
+        location.reload();
+    }
   },
   watch: {
     source(val, oldVal) {
@@ -37,13 +50,7 @@ export default {
      // this.$set(this, "date", val);
       this.date = val.replace(/[^\d-]/g, "").slice(0, 10);
     }
-  },
-  computed: {
-        ...mapState(dataStore, ['restaurants','users'])
-      },
-  methods: {
-        ...mapActions(dataStore, ['fetchUsers'])
-      }
+  }
 }
 </script>
 
@@ -60,6 +67,7 @@ body {
 }
 header {
   background-color: rgb(11, 175, 107);
-  font-size: 25px
+  height: 87px;
+  font-size: 15px
 }
 </style>
